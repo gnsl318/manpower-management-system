@@ -1,11 +1,11 @@
 
 from datetime import date
-from sqlalchemy import update
+
 from sqlalchemy.orm import Session, load_only
 from models.base import *
 from datetime import datetime
 from pytz import timezone
-timezone = timezone('Asia/Seoul')
+
 def user(
     *,
     db : Session,
@@ -17,14 +17,14 @@ def user(
     join_user:str,
     ):
     try:
-        if db.query(User).filter(User.name == name).first()==None:
+        if db.query(User).filter(User.email == email).first()==None:
             new_user = User(
                 employee_number = employee_number,
                 name=name,
                 department_id = db.query(Department).filter(Department.department == department).first().id,
                 position_id = db.query(Position).filter(Position.position == position).first().id,
                 email =email,
-                join_date = timezone.localize(datetime.strptime(f'{employee_number[:4]}-{employee_number[4:6]}-{employee_number[6:8]} 00:00:00', '%Y-%m-%d %H:%M:%S')),#datetime.datetime.now(timezone('Asia/Seoul')),
+                join_date = datetime.now(timezone('Asia/Seoul')),
                 join_user_id = db.query(User).filter(User.email == join_user).first().id
             )
             db.add(new_user)
