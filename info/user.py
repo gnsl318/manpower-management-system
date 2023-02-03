@@ -44,12 +44,6 @@ class Add_user(QDialog):
             self.add_user_table.horizontalHeader().setSectionResizeMode(i,QHeaderView.Stretch)
         #self.add_user_table.resizeColumnsToContents()
 
-    
-    @staticmethod
-    def show_message(message):
-        msg = QMessageBox()
-        msg.setText(message)
-        msg.exec_()
 
     def addButtonClicked(self):
         rowPosition = self.add_user_table.rowCount()

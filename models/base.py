@@ -20,7 +20,7 @@ class User(Base):
   join_date = Column(DateTime(timezone=True), nullable=False)
   resignation_date = Column(DateTime(timezone=True))
   join_user_id = Column(Integer,ForeignKey("users.id"))
-  join_user = relationship("User",foreign_keys=[join_user_id])
+  join_user = relationship("User",remote_side=[id])#,foreign_keys=[join_user_id])#back_populates="name",foreign_keys=[join_user_id])
   etc = Column(String(3000))
 
 class Department(Base):

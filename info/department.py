@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QDate,Qt
 from db import session
-from crud import create,get,update
+from crud import create,get,update,delete
 
 
 class Add_department(QDialog):
@@ -70,6 +70,11 @@ class Update_department(QDialog):
 
         self.update_button = QPushButton("저장")
         self.update_button.clicked.connect(self.updateButtonClicked)
+
+        self.delete_button = QPushButton("삭제")
+        self.delete_button.clicked.connect(self.deleteButtonClicked)
+
+        self.layout.addWidget(self.delete_button,4,0,1,2)
         self.layout.addWidget(self.update_button,3,0,1,2)
 
         self.setLayout(self.layout)
@@ -88,13 +93,34 @@ class Update_department(QDialog):
             self.department_box.addItem(department.department)
 
     def updateButtonClicked(self):
+        raw_department = self.department_box.currentText()
         department= self.department_label.text()
         try:
-            result=True
+            result=update.department(
+                db=self._db,
+                raw_department=raw_department,
+                department=department
+            )
             if result ==True:
                 self.close()
             else:
                 s=QMessageBox.warning(self,'Department Update','수정실패',QMessageBox.Yes,QMessageBox.Yes)
         except Exception as e:
             print(e)
-        
+
+    def deleteButtonClicked(self):
+        department = self.department_box.currentText()
+        try:
+            result = delete.department(
+                db=self._db,
+                department = department,
+            )
+            if result ==0:
+                self.close()
+            elif result ==1:
+                s=QMessageBox.warning(self,'Department Delete','DB Error 개발팀 문의부탁드립니다.',QMessageBox.Yes,QMessageBox.Yes)
+            elif result == 2:
+                s=QMessageBox.warning(self,'Department Delete','해당 파트에 포함된 사람이 있습니다.',QMessageBox.Yes,QMessageBox.Yes)
+        except Exception as e:
+            print(e)
+            s=QMessageBox.warning(self,'Department Delete','삭제실패',QMessageBox.Yes,QMessageBox.Yes)

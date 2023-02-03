@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import QDate,Qt
 from db import session
-from crud import create,get,update
+from crud import create,get,update,delete
 
 
 class Add_position(QDialog):
@@ -88,13 +88,34 @@ class Update_position(QDialog):
             self.position_box.addItem(position.position)
 
     def updateButtonClicked(self):
+        raw_position = self.position_box.currentText()
         position= self.position_label.text()
         try:
-            result=True
+            result=update.position(
+                db=self._db,
+                raw_position=raw_position,
+                position=position
+            )
             if result ==True:
                 self.close()
             else:
                 s=QMessageBox.warning(self,'Position Update','수정실패',QMessageBox.Yes,QMessageBox.Yes)
         except Exception as e:
             print(e)
-        
+
+    def deleteButtonClicked(self):
+        position = self.position_box.currentText()
+        try:
+            result = delete.position(
+                db=self._db,
+                position = position,
+            )
+            if result ==0:
+                self.close()
+            elif result ==1:
+                s=QMessageBox.warning(self,'Position Delete','DB Error 개발팀 문의부탁드립니다.',QMessageBox.Yes,QMessageBox.Yes)
+            elif result == 2:
+                s=QMessageBox.warning(self,'Position Delete','해당 파트에 포함된 사람이 있습니다.',QMessageBox.Yes,QMessageBox.Yes)
+        except Exception as e:
+            print(e)
+            s=QMessageBox.warning(self,'Position Delete','삭제실패',QMessageBox.Yes,QMessageBox.Yes)

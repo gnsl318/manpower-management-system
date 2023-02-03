@@ -58,3 +58,18 @@ def user_dep_pos(
 ):
     user_info = db.query(User).filter(and_(User.department.has(department=department),User.position.has(position=position))).all()
     return user_info
+
+
+def user_log(
+    *,
+    db:Session,
+):
+    user_logs = db.query(User_Log).all()
+    return user_logs
+    
+def post_log(
+    *,
+    db:Session,
+):
+    post_logs = db.query(Post_Log).all()
+    return post_logs

@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from db import session
 from send_mail import mail
-from info import user,position,department
+from info import user,position,department,download
 from login import Login
 import time
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -46,11 +46,7 @@ class App(QMainWindow):
         self.user_table()
 
         self.infolayout = QHBoxLayout()
-
-        
         self.infolayout.addWidget(self.user_table)
-
-
         self.Mainlayout.addLayout(self.infolayout)
 
         
@@ -112,55 +108,79 @@ class App(QMainWindow):
     def update_position(self):
         add_position_app = position.Update_position()
         add_position_app.exec_()
+
+    def download_user(self):
+        download_app = download.Download_user()
+        download_app.exec_()
+    
+    def download_log(self):
+        download_app = download.Download_log()
+        download_app.exec_()
+
+
         
 
     def setUsermenu(self):
-        self.useraddaction = QAction("Add User",self)
+        self.useraddaction = QAction("입사",self)
         self.useraddaction.setStatusTip("Add a User")
         self.useraddaction.triggered.connect(self.add_user)
 
-        self.userchangeaction = QAction("Change info",self)
+        self.userchangeaction = QAction("사원 정보 변경",self)
         self.userchangeaction.setStatusTip("Change user information")
         self.userchangeaction.triggered.connect(self.update_user)
 
     def setDepartmentmenu(self):
-        self.departmentaddaction = QAction("Add Department",self)
+        self.departmentaddaction = QAction("부서 추가",self)
         self.departmentaddaction.setStatusTip("Add a Department")
         self.departmentaddaction.triggered.connect(self.add_department)
 
-        self.departmentchangeaction = QAction("Change info",self)
+        self.departmentchangeaction = QAction("부서명 변경",self)
         self.departmentchangeaction.setStatusTip("Change Department information")
         self.departmentchangeaction.triggered.connect(self.update_department)
 
     def setPositionmenu(self):
-        self.positionaddaction = QAction("Add Position",self)
+        self.positionaddaction = QAction("직위 추가",self)
         self.positionaddaction.setStatusTip("Add a Position")
         self.positionaddaction.triggered.connect(self.add_position)
 
-        self.positionchangeaction = QAction("Change info",self)
+        self.positionchangeaction = QAction("직위명 변경",self)
         self.positionchangeaction.setStatusTip("Change position information")
         self.positionchangeaction.triggered.connect(self.update_position)
+
+    def setDownloadmenu(self):
+        self.userdownloadaction = QAction("사원 정보",self)
+        self.userdownloadaction.setStatusTip("User Infomation Download")
+        self.userdownloadaction.triggered.connect(self.download_user)
+
+        self.postdownloadaction = QAction("로그 기록",self)
+        self.postdownloadaction.setStatusTip("Post Log Download")
+        self.postdownloadaction.triggered.connect(self.download_log)
 
     def setMenuBar(self):
         self.setUsermenu()
         self.setDepartmentmenu()
         self.setPositionmenu()
+        self.setDownloadmenu()
 
         self.statusBar()
         self.menubar = self.menuBar()
         self.menubar.setNativeMenuBar(False)
 
-        usermenu = self.menubar.addMenu('&User')
+        usermenu = self.menubar.addMenu('&인력')
         usermenu.addAction(self.useraddaction)
         usermenu.addAction(self.userchangeaction)
 
-        departmentmenu = self.menubar.addMenu('&Department')
+        departmentmenu = self.menubar.addMenu('&부서')
         departmentmenu.addAction(self.departmentaddaction)
         departmentmenu.addAction(self.departmentchangeaction)
 
-        positionmenu = self.menubar.addMenu('&Position')
+        positionmenu = self.menubar.addMenu('&직위')
         positionmenu.addAction(self.positionaddaction)
         positionmenu.addAction(self.positionchangeaction)
+
+        downloadmenu = self.menubar.addMenu('&Download')
+        downloadmenu.addAction(self.userdownloadaction)
+        downloadmenu.addAction(self.postdownloadaction)
         
 
         

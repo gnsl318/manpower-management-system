@@ -51,3 +51,28 @@ def user(
         print(e)
         return False
 
+def department(
+    db : Session,
+    raw_department : str,
+    department : str
+):
+    department_info = db.query(Department).filter(Department.department==raw_department).first()
+    if department_info==None:
+        return False
+    else:
+       department_info.department = department
+    db.commit()
+    return True
+    
+def position(
+    db : Session,
+    raw_position : str,
+    position : str
+):
+    position_info = db.query(Position).filter(Position.position==raw_position).first()
+    if position_info==None:
+        return False
+    else:
+       position_info.position = position
+    db.commit()
+    return True
