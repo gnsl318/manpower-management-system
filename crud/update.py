@@ -1,11 +1,11 @@
 
 from datetime import date
-
+from sqlalchemy import and_
 from sqlalchemy.orm import Session, load_only
 from models.base import *
 from datetime import datetime
 from pytz import timezone
-
+import json
 
 def user(
     *,
@@ -18,38 +18,61 @@ def user(
     join_user:str,
 ):
     try:
+        raw={}
+        change={}
         user_info = db.query(User).filter(User.employee_number == employee_number).first()
-        user_dic=user_info.__dict__
-        for key,value in {"name":name,"email":email,"department_id":department,"position_id":position}.items():
-            if key =="department_id":
-                value=db.query(Department).filter(Department.department==department).first().id
-            if key =="position_id":
-                value=db.query(Position).filter(Position.position==position).first().id
-            if user_dic[key] != value:
-                raw = f"{key}-{user_dic[key]}"
-                change = f"{key}-{value}"
-                if key =="name":
-                    user_info.name=value
-                elif key =="email":
-                    user_info.email=value
-                elif key =="department_id":
-                    user_info.department_id=value
-                elif key =="position_id":
-                    user_info.position_id=value
-
-                user_log = User_Log(
-                    user_id=user_info.id,
-                    raw = raw,
-                    change = change,
-                    change_date = datetime.now(timezone('Asia/Seoul')),
-                    change_user_id = db.query(User).filter(User.email == join_user).first().id
-                )
-                db.add(user_log)
+        if user_info.name != name:
+            raw['이름']=user_info.name
+            change['이름']=name
+            user_info.name=name
+        elif user_info.email!=email:
+            raw['email'] = user_info.email
+            change['email']=email
+            user_info.email=email
+        elif user_info.department.department!=department:
+            raw['부서'] = user_info.department.department
+            change['부서']=department
+            user_info.department_id = db.query(Department).filter(Department.department==department).first().id
+        elif user_info.position.position !=position:
+            raw['직위'] = user_info.position.position
+            change['직위']=position
+            user_info.position_id = db.query(Position).filter(Position.position==position).first().id
+        user_log = User_Log(
+            user_id=user_info.id,
+            raw = json.dumps(raw,ensure_ascii=False),
+            change = json.dumps(change,ensure_ascii=False),
+            change_date = datetime.now(timezone('Asia/Seoul')),
+            change_user_id = db.query(User).filter(User.email == join_user).first().id
+        )
+        db.add(user_log)
         db.commit()
         return True
     except Exception as e:
         print(e)
         return False
+
+def user_resignation(
+    db:Session,
+    name:str,
+    edit_user_email:str
+):
+    try:
+        user_info = db.query(User).filter(and_(User.name == name,User.resignation_date==None)).first()
+        user_info.resignation_date = datetime.now(timezone('Asia/Seoul'))
+        user_log = User_Log(
+            user_id=user_info.id,
+            raw = "",
+            change = "퇴사",
+            change_date = datetime.now(timezone('Asia/Seoul')),
+            change_user_id = db.query(User).filter(User.email == edit_user_email).first().id
+        )
+        db.add(user_log)
+        db.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    
 
 def department(
     db : Session,

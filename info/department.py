@@ -38,10 +38,14 @@ class Add_department(QDialog):
     def pushButtonClicked(self):
         self.department_name = self.department_label.text()
         try:
-            create.department(
+            result=create.department(
                 db=self._db,
                 department = self.department_name,
             )
+            if result==False:
+                s=QMessageBox.warning(self,'Department DB error','Department DB error',QMessageBox.Yes,QMessageBox.Yes)
+            else: 
+                self.close()
             self.close()
         except:
             s=QMessageBox.warning(self,'Add Department','실패! 재시도해주세요',QMessageBox.Yes,QMessageBox.Yes) 

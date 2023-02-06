@@ -11,14 +11,14 @@ def user(
     *,
     db:Session,
 ):
-    user_info=db.query(User).order_by(User.employee_number).all()
+    user_info=db.query(User).filter(User.name != "Admin").order_by(User.employee_number).all()
     return user_info
 
 def user_true(
     *,
     db:Session,
 ):
-    user_info=db.query(User).filter(User.resignation_date==None).order_by(User.employee_number).all()
+    user_info=db.query(User).filter(and_(User.resignation_date==None,User.name != "Admin")).order_by(User.employee_number).all()
     return user_info
 def department(
     *,

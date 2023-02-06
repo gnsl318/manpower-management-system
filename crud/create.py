@@ -37,22 +37,31 @@ def department(
     *,
     db:Session,
     department:str,
-):
-    new_department = Department(
-        department=department,
-    )
-    db.add(new_department)
-    db.commit()
-    return new_department
+):  
+    try:
+        new_department = Department(
+            department=department,
+        )
+        db.add(new_department)
+        db.commit()
+        return new_department
+    except Exception as e:
+        print(e)
+        return False
+    
 
 def position(
     *,
     db:Session,
     position:str,
 ):
-    new_position = Position(
-        position=position,
-    )
-    db.add(new_position)
-    db.commit()
-    return new_position
+    try:
+        new_position = Position(
+            position=position,
+        )
+        db.add(new_position)
+        db.commit()
+        return new_position
+    except Exception as e:
+        print(e)
+        return False

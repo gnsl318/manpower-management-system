@@ -38,11 +38,14 @@ class Add_position(QDialog):
     def pushButtonClicked(self):
         self.position_name = self.position_label.text()
         try:
-            create.department(
+            result=create.position(
                 db=self._db,
-                department = self.position_name,
+                position = self.position_name,
             )
-            self.close()
+            if result==False:
+                s=QMessageBox.warning(self,'Position DB error','Position DB error',QMessageBox.Yes,QMessageBox.Yes)
+            else: 
+                self.close()
         except:
             s=QMessageBox.warning(self,'Add Position','실패! 재시도해주세요',QMessageBox.Yes,QMessageBox.Yes) 
      
