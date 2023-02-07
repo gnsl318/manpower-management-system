@@ -20,7 +20,9 @@ def user(
     try:
         raw={}
         change={}
+
         user_info = db.query(User).filter(User.employee_number == employee_number).first()
+
         if user_info.name != name:
             raw['이름']=user_info.name
             change['이름']=name

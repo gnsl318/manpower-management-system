@@ -25,31 +25,42 @@ class mail():
             return False
     def send_mail(self,folder_path,email,name):
         print(email)
-        msg = MIMEMultipart()
-        pdf_list = os.listdir(folder_path)
-        for pdf in pdf_list:
-            pdf = normalize('NFC',pdf)
-            if pdf.split("_")[-1] == f"{name}.pdf":
-                file_name = pdf
-                file = os.path.join(folder_path,file_name)
-                print(file)
-        if os.path.isfile(file):
-            print(os.path.isfile(file))
-        else:
+        try:
+            msg = MIMEMultipart()
+            pdf_list = os.listdir(folder_path)
+            for pdf in pdf_list:
+                pdf = normalize('NFC',pdf)
+                try:
+                    if pdf.split("_")[-1] == f"{name}.pdf":
+                        file_name = pdf
+                        file = os.path.join(folder_path,file_name)
+                except:
+                    pdf = normalize('NFC',pdf)
+                    if pdf.split("_")[-1] == f"{name}.pdf":
+                        file_name = pdf
+                        file = os.path.join(folder_path,file_name)
+            if os.path.isfile(file):
+                print(os.path.isfile(file))
+            else:
+                return False
+            text = MIMEText("안녕하세요 (주)서르입니다 \n 급여명세서 발송 메일입니다 \n 고생하셨습니다.")
+            msg['From'] = self.email
+            msg['to'] = email
+            msg['Subject']= f"(주)서르_{file_name.split('월')[0].split('_')[-1]}월 급여명세서"
+            msg.attach(text)
+            msg.preamble="?"
+            part = MIMEBase("application","octet-stream")
+            part.set_payload(open(file,"rb").read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment',filename=file_name)
+            msg.attach(part)
+            self.smtp.sendmail(self.email,email,msg.as_string())
+            return True
+        except Exception as e:
+            print(e)
+            print(email)
             return False
-        text = MIMEText("안녕하세요 (주)서르입니다 \n 급여명세서 발송 메일입니다 \n 고생하셨습니다.")
-        msg['From'] = self.email
-        msg['to'] = email
-        msg['Subject']= f"(주)서르_{file_name.split('월')[0].split('_')[-1]}월 급여명세서"
-        msg.attach(text)
-        msg.preamble="?"
-        part = MIMEBase("application","octet-stream")
-        part.set_payload(open(file,"rb").read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment',filename=file_name)
-        msg.attach(part)
-        self.smtp.sendmail(self.email,email,msg.as_string())
-        return True
+        
         #self.smtp.quit()
     
     

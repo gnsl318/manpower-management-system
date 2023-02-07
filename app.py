@@ -90,7 +90,7 @@ class App(QMainWindow):
         self.control_buttonlayout.addWidget(self.progressbar,2,0,1,3)
         self.folder_path = QFileDialog.getExistingDirectory(self, "Select Directory")
         all_user = get.user_true(db= self._db)
-        self.progressbar.setMaximum(len(self.info))
+        self.progressbar.setMaximum(len(all_user))
         self.thread = MyThread(len(all_user))
         self.thread.change_value.connect(self.setProgressVal)
         self.thread.start()
@@ -98,6 +98,7 @@ class App(QMainWindow):
         for user in all_user:
             self.thread.working=True
             result = self.m.send_mail(folder_path=self.folder_path,email=user.email,name=user.name)
+            create.post_log(db=self._db,user_name=user.name,result=str(result),post_user_email=self.email)
             self.thread.working=False
 
     def postselect(self):
@@ -119,6 +120,7 @@ class App(QMainWindow):
         for name,email in self.info.items():
             self.thread.working=True
             result =self.m.send_mail(folder_path=self.folder_path,email=email,name=name)
+            create.post_log(db=self._db,user_name=user.name,result=str(result),post_user_email=self.email)
             self.thread.working=False
 
         

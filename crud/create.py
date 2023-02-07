@@ -33,6 +33,27 @@ def user(
     except:
         return False
 
+def post_log(
+    *,
+    db:Session,
+    user_name:str,
+    result:str,
+    post_user_email:str
+):
+    try:
+        new_log = Post_Log(
+            user_id = db.query(User).filter(User.name==user_name).first().id,
+            post_date = datetime.now(timezone('Asia/Seoul')),
+            result = result,
+            post_user_id = db.query(User).filter(User.email==post_user_email).first().id
+        )
+        db.add(new_log)
+        db.commit()
+    except Exception as e:
+        print(e)
+        return False
+
+
 def department(
     *,
     db:Session,
