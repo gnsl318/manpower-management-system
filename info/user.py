@@ -78,7 +78,6 @@ class Add_user(QDialog):
                 self.close()
             except:
                 continue
-        self.show_message(result_list)
 
 class Update_user(QDialog):
     def __init__(self,email):
@@ -145,11 +144,7 @@ class Update_user(QDialog):
             self.layout.addWidget(self.saveUpdateButton,11,1)
         else:
             pass
-    @staticmethod
-    def show_message(message):
-        msg = QMessageBox()
-        msg.setText(message)
-        msg.exec_()
+
     
     def searchButtonClicked(self):
         department = self.department_box.currentText()
@@ -184,7 +179,7 @@ class Update_user(QDialog):
         try:
             self.add_user_table.insertRow(rowPosition)
         except:
-            self.show_message("재시도")
+            pass
     def updateButtonClicked(self):
         employee_number = self.employee_number_label.text()
         name = self.name_label.text()
@@ -231,9 +226,13 @@ class Update_user(QDialog):
                 )
                 if result != False:
                     result_list.append(result)
-                self.close()
             except:
                 continue
-        self.show_message(result_list)
+        if len(result_list)>0:
+            s=QMessageBox.warning(self,'수정실패',f'{result_list}',QMessageBox.Yes,QMessageBox.Yes)
+            self.close()
+        else:
+            self.close()
+        
             
     

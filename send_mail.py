@@ -14,6 +14,7 @@ class mail():
         self.pw = password
         self.smtp = smtplib.SMTP('smtp.cafe24.com',587)   # 587: 서버의 포트번호
         self.smtp.ehlo()
+        ## exe화 할때 밑에 2줄은 주서처리
         self.smtp.starttls()   # tls방식으로 접속, 그 포트번호가 587
         self.smtp.ehlo()
         
